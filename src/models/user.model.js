@@ -20,7 +20,7 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'Password is required'],
         set: val => String(val),
-        select: false
+        
     },
     role: {
         type: String,
@@ -33,6 +33,10 @@ const userSchema = new Schema({
     },
 }, { timestamps: true }
 )
+
+userSchema.methods.isPasswordCorrect = async function(password) {
+   return await bcrypt.compare(password, this.password)
+}
 
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next()
