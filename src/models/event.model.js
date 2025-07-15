@@ -7,24 +7,24 @@ const eventSchema = new Schema({
         index: true
 
     },
+    category: {
+        type: String,
+        required: true,
+        index: true,
+        enum: ['hackathon', 'internship', 'contest']
+    },
     desc: {
         type: String
     },
     time: {
         type: Date,
     },
-    expiryDate: {
+    deadline: {
       type: Date, // event registration close or end time
       required: true
     },
     location: {
         type: String
-    },
-    category: {
-        type: String,
-        required: true,
-        index: true,
-        enum: ['hackathon', 'internship', 'coding_contest']
     },
     source: {
         type: String,
