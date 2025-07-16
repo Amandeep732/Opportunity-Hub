@@ -5,7 +5,6 @@ const eventSchema = new Schema({
         type: String,
         required: true,
         index: true
-
     },
     category: {
         type: String,

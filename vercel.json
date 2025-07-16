@@ -1,0 +1,23 @@
+{
+  "functions": {
+    "app/api/scrape/*.js": {
+      "memory": 3008,
+      "maxDuration": 40
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/scrape",
+      "methods": ["POST"],
+      "headers": {
+        "Authorization": "Bearer ${process.env.CRON_SECRET}"
+      }
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/scrape/cron",
+      "schedule": "0 8 * * *" 
+    }
+  ]
+}
