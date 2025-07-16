@@ -2,13 +2,16 @@ import connectDb from "@/helpers/connectdb";
 import { Event } from "@/models/event.model";
 import { NextResponse } from "next/server";
 
+
 export async function GET(request) {
   try {
-    // ✅ Connect to the database
+   
     await connectDb();
 
-    // ✅ Fetch events where approved is NOT true
-    const events = await Event.find({ approved: { $ne: true } }).lean();
+    const events = await Event.find({ approved: true }).lean();
+
+    // ✅ If you want ALL events (even unapproved):
+    // const events = await Event.find().lean();
 
     return NextResponse.json(
       {
@@ -19,11 +22,11 @@ export async function GET(request) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error fetching non-approved events:", error);
+    console.error("Error fetching events:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to fetch non-approved events",
+        message: "Failed to fetch events",
       },
       { status: 500 }
     );
