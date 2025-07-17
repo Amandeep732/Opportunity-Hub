@@ -8,10 +8,7 @@
   "routes": [
     {
       "src": "/api/scrape",
-      "methods": ["POST"],
-      "headers": {
-        "Authorization": "Bearer ${process.env.CRON_SECRET}"
-      }
+      "methods": ["POST"]
     }
   ],
   "crons": [

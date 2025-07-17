@@ -11,7 +11,7 @@ export const runtime = 'nodejs';
 export async function POST() {
   return withErrorHandling(async () => {
     // Run all scrapers in parallel
-    const [hackathons, contests] = await Promise.allSettled([
+    const [hackathons, internships, contests] = await Promise.allSettled([
       scrapeDevpost(),
       scrapeCodeforces(),
       scrapeInternshala()
