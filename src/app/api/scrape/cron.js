@@ -1,11 +1,11 @@
 export default async function handler(req, res) {
-  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'http://localhost:3000';
 
   try {
-    // Trigger scraping route
-    const response = await fetch(`${process.env.VERCEL_URL}/api/scrape`, {
+    const response = await fetch(`${baseUrl}/api/scrape`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     });

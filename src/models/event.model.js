@@ -10,7 +10,7 @@ const eventSchema = new Schema({
         type: String,
         required: true,
         index: true,
-        enum: ['hackathon', 'internship', 'contest']
+        enum: ['hackathons', 'internships', 'contests']
     },
     desc: {
         type: String

@@ -1,36 +1,38 @@
 import { NextResponse } from 'next/server';
-import { scrapeDevpost } from '@/scripts/devpost-scraper'; 
-import { scrapeInternshala } from '@/scripts/internshala-scraper';//
-import { scrapeCodeforces } from '@/scripts/codeforces-scraper';//
-import { saveToDB } from '@/lib/db'; //
+import { scrapeDevpost } from '@/scripts/devpost-scraper';
+import { scrapeInternshala } from '@/scripts/internships';
+import { scrapeCodeforces } from '@/scripts/contests';
+import { saveToDB } from '@/helpers/saveToDB';
 import { withErrorHandling } from '@/helpers/error-handler';
 
-export const config = {
-  runtime: 'edge', // Use Vercel's Edge Runtime
-};
+// ✅ Puppeteer requires Node.js runtime, not Edge
+export const runtime = 'nodejs';
 
-const handler = async () => {
-  // Run scrapers in parallel with safety
-  const [hackathons, internships, contests] = await Promise.allSettled([
-    scrapeDevpost(),
-    scrapeInternshala(),//
-    scrapeCodeforces()//
-  ]);
+export async function POST() {
+  return withErrorHandling(async () => {
+    // Run all scrapers in parallel
+    const [hackathons, contests] = await Promise.allSettled([
+      scrapeDevpost(),
+      scrapeCodeforces(),
+      scrapeInternshala()
+    ]);
 
-  const results = [
-    ...(hackathons.status === 'fulfilled' ? hackathons.value : []),
-    ...(internships.status === 'fulfilled' ? internships.value : []),
-    ...(contests.status === 'fulfilled' ? contests.value : [])
-  ];
+    // Merge results from fulfilled promises
+    const results = [
+      ...(hackathons.status === 'fulfilled' ? hackathons.value : []),
+      ...(internships.status === 'fulfilled' ? internships.value : []),
+      ...(contests.status === 'fulfilled' ? contests.value : [])
+    ];
+      
+    // Save to DB
+    await saveToDB(results);
 
-  // Save to database
-  await saveToDB(results);//
-
-  return NextResponse.json({
-    success: true,
-    scraped: results.length,
-    sources: ['Devpost', 'Internshala', 'Codeforces']
-  });
-};
-
-export default withErrorHandling(handler);
+    // Respond with JSON
+    return NextResponse.json({
+      success: true,
+      scraped: results.length,
+      data: results,
+      sources: ['Devpost', 'Internshala', 'Codeforces']
+    });
+  })();
+}
