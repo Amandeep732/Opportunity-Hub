@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import api from "@/helpers/api"; // <-- your axios instance configured with baseURL & auth headers
+import api from "@/helpers/api";
 
-export default function HackathonsPage() {
-  const [hackathons, setHackathons] = useState([]);
+export default function InternshipsPage() {
+  const [internships, setInternships] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -12,17 +12,13 @@ export default function HackathonsPage() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const userRes = await api.get("/user/me")
-        const hackRes = await api.get("/event/usersApi/hackathons")
-        if(!hackRes.data.hackathons) {
-          setHackathons([]);
-        }
+        const userRes = await api.get("/user/me");
+        const internshipsRes = await api.get("/event/usersApi/internships");
     
         setUser(userRes.data.user); 
-        setHackathons(hackRes.data.hackathons);
-       // array of hackathons
+        setInternships(internshipsRes.data.internships);
       } catch (err) {
-        console.error("Error fetching hackathons:", err);
+        console.error("Error fetching internships:", err);
       } finally {
         setLoading(false);
       }
@@ -31,19 +27,19 @@ export default function HackathonsPage() {
   }, []);
 
   async function handleDelete(id) {
-    if (!confirm("Are you sure you want to delete this hackathon?")) return;
+    if (!confirm("Are you sure you want to delete this internship?")) return;
     try {
       const response = await api.delete(`/event/adminApi/delete/${id}`);
       console.log("Delete response:", response.data);
-      setHackathons((prev) => prev.filter((h) => h._id !== id));
+      setInternships((prev) => prev.filter((i) => i._id !== id));
     } catch (err) {
       console.error("Delete failed:", err);
-      alert("Failed to delete hackathon.");
+      alert("Failed to delete internship.");
     }
   }
 
   if (loading) {
-    return <p className="p-6">Loading hackathons...</p>;
+    return <p className="p-6">Loading internships...</p>;
   }
 
   if (!user) {
@@ -52,16 +48,16 @@ export default function HackathonsPage() {
 
   return (
     <div className="p-6 max-w-full overflow-hidden">
-      <h1 className="text-3xl font-bold mb-6">Upcoming Hackathons</h1>
+      <h1 className="text-3xl font-bold mb-6">Upcoming Internships</h1>
 
       {/* Add button visible only for admin */}
       {user.role.trim() === 'admin' && (
         <div className="mb-4">
           <Link
-            href="/hackathons/add"
+            href="/internships/add"
             className="inline-block bg-green-600 text-black px-4 py-2 rounded hover:bg-green-700 transition"
           >
-            + Add Hackathon
+            + Add Internship
           </Link>
         </div>
       )}
@@ -75,20 +71,22 @@ export default function HackathonsPage() {
                 Title
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                Location
+                Company
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                 Link
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                Issue Date
+                Posted Date
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                 Deadline
               </th>
-               {user.role.trim() === 'user' && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
-                 Operations
-              </th>  }  
+              {user.role.trim() === 'user' && (
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
+                  Operations
+                </th>
+              )}  
               {user.role.trim() === 'admin' && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                   Actions
@@ -97,42 +95,42 @@ export default function HackathonsPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {hackathons?.map((hack) => (
-              <tr key={hack._id} className="hover:bg-gray-50">
+            {internships?.map((internship) => (
+              <tr key={internship._id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 text-sm text-black w-1/6">
-                  {hack.title}
+                  {internship.title}
                 </td>
                 <td className="px-6 py-4 text-sm text-black w-1/6">
-                  {hack.location}
+                  {internship.company || internship.location}
                 </td>
                 <td className="px-6 py-4 text-sm text-black w-1/6">
                   <a 
-                    href={hack.registrationLink} 
+                    href={internship.registrationLink || internship.applyLink} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    Register
+                    Apply
                   </a>
                 </td>
                 <td className="px-6 py-4 text-sm text-black w-1/6">
-                  {new Date(hack.createdAt).toLocaleDateString()}
+                  {new Date(internship.createdAt).toLocaleDateString()}
                 </td>
                 <td className="px-6 py-4 text-sm text-black w-1/6">
-                  {new Date(hack.deadline).toLocaleDateString()}
+                  {new Date(internship.deadline).toLocaleDateString()}
                 </td>
                 
                 {user.role.trim() === "admin" && (
-                  <td className="px-6 py-4  text-sm w-1/6">
+                  <td className="px-6 py-4 text-sm w-1/6">
                     <div className="flex space-x-2">
                       <Link
-                        href={`/hackathons/edit/${hack._id}`}
+                        href={`/internships/edit/${internship._id}`}
                         className="bg-blue-600 cursor-pointer text-white px-3 py-1 rounded hover:bg-blue-700 transition"
                       >
                         Edit
                       </Link>
                       <button
-                        onClick={() => handleDelete(hack._id)}
+                        onClick={() => handleDelete(internship._id)}
                         className="bg-red-600 cursor-pointer text-white px-3 py-1 rounded hover:bg-red-700 transition"
                       >
                         Delete

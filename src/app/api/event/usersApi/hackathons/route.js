@@ -9,12 +9,12 @@ export async function GET() {
 
     const hackathons = await Event.find({
       category: "hackathons",
-      approved: true,
+      approved: false ,
     }).sort({ createdAt: -1 });
 
     // calculate length
     const count = hackathons.length;
-
+    console.log("hi", hackathons)
     // return response with both
     return NextResponse.json(
       {

@@ -10,11 +10,12 @@ export async function GET() {
     // Fetch all approved internships
     const internships = await Event.find({
       category: "internships",   // 👈 change category
-      approved: true,
+      approved: false,
     }).sort({ createdAt: -1 });
 
     // Count length
     const count = internships.length;
+    console.log('internship length from  inter api', count)
 
     return NextResponse.json(
       {

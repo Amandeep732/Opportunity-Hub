@@ -6,6 +6,7 @@ import { verifyadmin } from './helpers/verifyadmin';
 export async function middleware(request) {
   const path = request.nextUrl.pathname;
   const token = request.cookies.get('accessToken')?.value
+  console.log(`token from middleware ${token}`)
   const userApiBase = '/api/event/usersApi';
   const adminApiBase = '/api/event/adminApi';
   // auth logic for all routes
@@ -28,16 +29,10 @@ export async function middleware(request) {
       { status: 401 }
     );
   }
-  if (path.startsWith(adminApiBase) && user.role !== 'admin') {
-    return NextResponse.json(
-      { error: "Forbidden - Admin access required" },
-      { status: 403 }
-    );
-  }
+
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-user-data', JSON.stringify({
     id: user.id,
-    role: user.role
   }));
 
   return NextResponse.next({

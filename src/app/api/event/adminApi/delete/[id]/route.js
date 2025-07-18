@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 
 export async function DELETE(request, { params }) {
   // ✅ Check for id
+  console.log(params)
+
   if (!params.id) {
     return NextResponse.json(
       { error: "Event ID not provided" },
