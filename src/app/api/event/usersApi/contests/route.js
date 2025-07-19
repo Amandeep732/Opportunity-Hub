@@ -10,7 +10,7 @@ export async function GET() {
     // Fetch all approved contests
     const contests = await Event.find({
       category: "contests",    // 👈 category for contests
-      approved: false,
+      approved: true,
     }).sort({ createdAt: -1 });
 
     // Count length

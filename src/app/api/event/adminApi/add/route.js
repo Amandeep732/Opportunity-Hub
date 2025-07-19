@@ -76,7 +76,7 @@ export async function POST(request) {
       );
     }
 
-    return NextResponse.json({ message: "Event Created" }, { status: 201 });
+    return NextResponse.json({ message: "Event Created", response }, { status: 201 });
   } catch (error) {
     console.error("Error not added event by admin:", error);
     return NextResponse.json(

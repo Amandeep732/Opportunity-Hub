@@ -9,7 +9,7 @@ export async function GET() {
 
     const hackathons = await Event.find({
       category: "hackathons",
-      approved: false ,
+      approved: true ,
     }).sort({ createdAt: -1 });
 
     // calculate length

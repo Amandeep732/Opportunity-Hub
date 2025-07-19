@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 export default function TopNavbar() {
   const router = useRouter();
 
-  const handleLogout = () => {
-    document.cookie =
-      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    router.push("/");
-  };
+ const handleLogout = () => {
+  
+  document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  
+  router.push("/");
+};
 
   return (
     <div className="w-full h-16 bg-[#1b1b1e] border-b border-white/10 px-6 flex items-center justify-between">

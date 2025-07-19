@@ -8,10 +8,7 @@ export async function GET(request) {
    
     await connectDb();
 
-    const events = await Event.find({ approved: true }).lean();
-
-    // ✅ If you want ALL events (even unapproved):
-    // const events = await Event.find().lean();
+    const events = await Event.find({ approved: false }).lean();
 
     return NextResponse.json(
       {

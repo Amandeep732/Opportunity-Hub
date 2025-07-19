@@ -27,7 +27,7 @@ export default function DashboardPage() {
         setUser(userRes.data.user);
         setHackathonsCount(countRes.data.count || 0); 
         setInternshipCount(interCount.data.count || 0),
-        setContestsCount(ContestsCount.data.count)
+        setContestsCount(ContestsCount.data.count || 0)
         // Ensure we have a number
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -65,10 +65,10 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick add button only for admin */}
-      {user?.role === "admin" && (
+      {user?.role.trim() === "admin" && (
         <div className="mb-6">
           <Link
-            href="/events/add"
+            href="/dashboard/addEvent"
             className="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
           >
             + Add New Event
