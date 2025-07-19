@@ -1,32 +1,33 @@
-import connectDb from "@/helpers/connectdb";
-import { redis } from "@/helpers/redis";
+
+import { redis } from "@/helpers/redis"; 
 import { User } from "@/models/user.model";
-import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { NextResponse } from "next/server";
+import connectDb from "@/helpers/connectdb";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req) {
+  await connectDb()
+  const { email } = await req.json();
 
-    await connectDb();
-    const { email } = await req.json();
+  const normalizedEmail = email.trim().toLowerCase(); // ✅ important!
 
-    const normalizedEmail = email?.trim().toLowerCase(); // ✅ important!
+  const user = await User.findOne({ email: normalizedEmail });
+  if (!user) {
+    return NextResponse.json({ message: "Email not found" }, { status: 404 });
+  }
 
-    const user = await User.findOne({ normalizedEmail })
-    if (!user) {
-        return NextResponse.json({ message: "Email not found" }, { status: 404 });
-    }
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  console.log("Generated OTP for", normalizedEmail, "is:", otp);
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log("Generated OTP for", normalizedEmail, "is:", otp);
+  await redis.set(`otp:${normalizedEmail}`, otp, { ex: 300 }); // ✅ 5 min expiry
 
-    await redis.set(`otp:${normalizedEmail}`, otp, { ex: 300 })
-      try {
+  try {
     await resend.emails.send({
-      from: "Opportunity_Hub <onboarding@resend.dev>",
+      from: "Job Tracker <onboarding@resend.dev>",
       to: [normalizedEmail],
-      subject: "Your One-Time Password (OTP) for Opportunity_Hub ",
+      subject: "Your One-Time Password (OTP) for Job Tracker",
       html: `
     <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f7;">
       <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -54,7 +55,7 @@ export async function POST(req) {
 
         <p style="font-size: 14px; color: #999;">
           Stay secure,<br />
-          <strong>Opportunity_Hub Team</strong>
+          <strong>Job Tracker Team</strong>
         </p>
       </div>
     </div>
