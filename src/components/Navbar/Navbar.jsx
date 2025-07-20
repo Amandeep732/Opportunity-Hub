@@ -51,7 +51,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isLoggedIn } = useAuth();
+   const { isLoggedIn } = useAuth();
+  //const isLoggedIn = true;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,14 +69,13 @@ export default function Navbar() {
 
   return (
     <nav className={`
-      fixed w-full
-      bg-[#1a1a1a]/80  /* Increased transparency */
+      bg-[#1a1a1a] 
       border-b border-white/10 
       px-4 sm:px-6 py-4 
       flex justify-between items-center 
-      top-0 z-50 
+      sticky top-0 z-50 
       transition-all duration-300
-      ${isScrolled ? 'backdrop-blur-md bg-[#1a1a1a]/90' : 'backdrop-blur-none bg-[#1a1a1a]/90'}
+      ${isScrolled ? 'backdrop-blur-sm bg-opacity-90' : 'bg-opacity-100'}
     `}>
       <div className="flex items-center justify-between w-full">
         <div className="text-2xl font-bold text-white">
@@ -120,11 +120,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className={`
-          md:hidden absolute top-16 left-0 right-0 
-          bg-[#1a1a1a]/90 backdrop-blur-md  /* Added blur effect */
-          border-t border-white/10 p-4 flex flex-col gap-2
-        `}>
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-[#1a1a1a] border-t border-white/10 p-4 flex flex-col gap-2">
           {filteredNavItems.map((item) => (
             <Link 
               key={item.href} 
