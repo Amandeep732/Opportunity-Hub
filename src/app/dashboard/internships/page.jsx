@@ -68,7 +68,7 @@ export default function InternshipsPage() {
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Link</th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posted</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Deadline</th>
+
               {(user.role.trim() === 'admin') && (
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               )}
@@ -90,7 +90,7 @@ export default function InternshipsPage() {
                   </a>
                 </td>
                 <td className="px-4 py-4 text-sm text-gray-700">{new Date(internship.createdAt).toLocaleDateString()}</td>
-                <td className="px-4 py-4 text-sm text-gray-700">{new Date(internship.deadline).toLocaleDateString('en-US',{ month:'short', day:'numeric', year:'numeric' })}</td>
+               
                 {user.role.trim() === 'admin' && (
                   <td className="px-4 py-4 text-sm">
                     <div className="flex space-x-2">

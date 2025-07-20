@@ -87,12 +87,12 @@ export default function EditEventPage() {
     try {
         const payload = {
         title: formData.title,
-        desc: formData.desc,
+        desc: formData.desc || '',
         category: formData.category,
         source: formData.source,
         approved: formData.approved,
         time: formData.time,
-        deadline: formData.deadline,
+        deadline: formData.deadline || '',
         location: formData.location,
         registrationLink: formData.registrationLink,
       };
@@ -181,7 +181,7 @@ export default function EditEventPage() {
                 onChange={handleChange}
                 rows={4}
                 className="w-full p-2 border border-gray-700 rounded bg-gray-900 text-white"
-                required
+                
               />
             </div>
 
@@ -196,7 +196,7 @@ export default function EditEventPage() {
                 value={formData.time}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-700 rounded bg-gray-900 text-white [color-scheme:dark]"
-                required
+                
               />
             </div>
 
@@ -211,7 +211,7 @@ export default function EditEventPage() {
                 value={formData.deadline}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-700 rounded bg-gray-900 text-white [color-scheme:dark]"
-                required
+                
               />
             </div>
 

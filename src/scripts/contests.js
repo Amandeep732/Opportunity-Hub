@@ -1,44 +1,54 @@
 import * as cheerio from 'cheerio';
 import { safeScrape } from './puppeteer-helper';
-import { rateLimit } from '@/helpers/rate-limiter'; 
 
 export const scrapeCodeforces = async () => {
-  //await rateLimit('codeforces', 3); // Rate limiting
-
   const html = await safeScrape('https://codeforces.com/contests');
   const $ = cheerio.load(html);
   const events = [];
 
-  // Upcoming contests are in a table
-  $('table.contests-table tr').each((i, el) => {
-    // Skip table header
-    if (i === 0) return;
+  // Process both contest tables and lists
+  $('.contests-table, .contest-list, .datatable').each((_, table) => {
+    $(table).find('tr').each((i, row) => {
+      // Skip header rows and empty rows
+      if ($(row).find('th').length > 0 || $(row).text().trim() === '') return;
 
-    const row = $(el);
-    const columns = row.find('td');
-    if (columns.length < 6) return; // Ensure it's a valid row
+      const cols = $(row).find('td');
+      if (cols.length < 3) return;
 
-    const title = row.find("bottom dark left") || $(columns[0]).text().trim() 
-    const relativeUrl = $(columns[0]).find('a').attr('href');
-    const absoluteUrl = relativeUrl
-      ? `https://codeforces.com${relativeUrl}`
-      : 'https://codeforces.com/contests';
+      // 1. IMPROVED TITLE EXTRACTION
+      const title = $('td.dark.left').text().trim() || 'Codeforces Contest';
+      
+      // Clean up common title artifacts
+      const cleanTitle = title.replace(/»/g, '').replace(/\s+/g, ' ').trim();
 
-    const startTime = $(columns[2]).attr('href').text().trim()
-    const duration = $(columns[3]).text().trim();
-    const registrationLink = absoluteUrl;
+      // 2. IMPROVED LINK EXTRACTION
+      let contestLink = $(cols[0]).find('a').attr('href') || '';
+      if (!contestLink.startsWith('http')) {
+        contestLink = contestLink.startsWith('/') 
+          ? `https://codeforces.com${contestLink}`
+          : `https://codeforces.com/contest/${contestLink}`;
+      }
 
-    events.push({
-      title: title || 'Codeforces contest',
-      date: `${startTime} (Duration: ${duration})`,
-      url: absoluteUrl,
-      registrationLink: registrationLink,
-      location: 'Online',
-      category: 'contests',
-      deadline: startTime || 'Not specified',
-      source: 'scrape',
-      approved: false,
-      scrapedAt: new Date().toISOString(),
+      // 3. ADVANCED DATE PARSING
+      const rawDate = $(cols[2]).text().trim() || $(cols[1]).text().trim();
+      const cleanDate = rawDate
+        .replace(/\n/g, ' ')          // Remove newlines
+        .replace(/\s+/g, ' ')         // Collapse spaces
+        .replace(/UTC.*$/, '')        // Remove timezone
+        .trim();
+
+      // Convert to ISO format if possible
+      const isoDate = new Date(cleanDate).toISOString() || cleanDate;
+      const t = cleanTitle.split('(')[0].trim();
+      events.push({
+        title: t || 'Codeforces Contest',
+        date: isoDate,
+        registrationLink: contestLink,
+        location: "Online",
+        category: 'contests',
+        source: 'scrape',
+        scrapedAt: new Date().toISOString(),
+      });
     });
   });
 

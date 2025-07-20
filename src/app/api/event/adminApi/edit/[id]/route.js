@@ -37,10 +37,7 @@ export async function PATCH(request, { params }) {
     // ✅ Validate required fields (you can relax this if partial updates allowed)
     if (
       !title ||
-      !desc ||
       !category ||
-      !time ||
-      !deadline ||
       !location ||
       !registrationLink
     ) {

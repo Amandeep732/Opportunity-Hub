@@ -11,30 +11,18 @@ export const scrapeInternshala = async () => {
 
   $('.individual_internship').each((i, el) => {
     const card = $(el);
-
     const title = card.find('h3').find('a').text().trim();
-    const relativeUrl = card.find('a.view_detail_button').attr('href');
-    const absoluteUrl = relativeUrl
-      ? `https://internshala.com${relativeUrl}`
-      : 'https://internshala.com/internships/work-from-home-jobs';
-
-    const desc = card.find('.company_and_preminum p').text().trim();
     const location = card.find('.location span').text().trim() || 'Remote';
     const startDate = $('.apply .item_body').text().trim();
-    const now = new Date();
-    now.setDate(now.getDate() + 7); // add 7 days
-    const applyBy = now.toISOString();
-    const registrationLink = absoluteUrl;
+    
+    const registrationLink = 'https://internshala.com/internships/work-from-home-jobs';
 
     events.push({
       title: title || "Internship",
-      desc: desc,
-      date: startDate || 'Not specified',
-      url: absoluteUrl,
+      date: startDate || new Date(),
       registrationLink: registrationLink,
       location: location,
       category: 'internships',
-      deadline: applyBy,
       source: 'scrape',
       approved: false,
       scrapedAt: new Date().toISOString(),

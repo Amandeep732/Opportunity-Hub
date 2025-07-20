@@ -19,8 +19,7 @@ const eventSchema = new Schema({
         type: Date,
     },
     deadline: {
-      type: Date, // event registration close or end time
-      required: true
+      type: Date, 
     },
     location: {
         type: String
