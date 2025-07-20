@@ -1,9 +1,8 @@
 import * as cheerio from 'cheerio';
 import { safeScrape } from './puppeteer-helper.js';
-import { rateLimit } from '@/helpers/rate-limiter.js';
+
 
 export const scrapeInternshala = async () => {
-  //await rateLimit('internshala', 3); // Rate limiting
 
   const html = await safeScrape('https://internshala.com/internships');
   const $ = cheerio.load(html);
