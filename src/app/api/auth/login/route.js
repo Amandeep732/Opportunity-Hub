@@ -41,9 +41,9 @@ export async function POST(req) {
       },
     });
 
-    // Fixed cookie settings for Vercel production
+    
     const isProduction = process.env.NODE_ENV === "production";
-    const cookieDomain = isProduction ? "my deploy url" : undefined;
+    const cookieDomain = isProduction ? "opportunity-hub-nine.vercel.app" : undefined;
 
 
     // Set accessToken cookie
